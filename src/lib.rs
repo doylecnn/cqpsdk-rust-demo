@@ -6,6 +6,10 @@ use std::ffi::{CStr,CString};
 extern crate libc;
 use self::libc::{c_char};
 
+extern crate encoding;
+use encoding::{Encoding, DecoderTrap};
+use encoding::all::GB18030;
+
 extern crate cqpsdk;
 use cqpsdk::{CqpApi,LogLevel};
 
@@ -29,9 +33,12 @@ pub extern "stdcall" fn initialize(auth_code: i32) -> i32 {
 
 #[export_name="\x01_PrivateMessageHandler"]
 pub extern "stdcall" fn private_message_handler(sub_type: i32, send_time: i32, qq_number: i64, msg: *const c_char, font: i32) -> i32 {
+    
     unsafe {
-        cqpapi.send_private_message(qq_number, "Reply!");
-        cqpapi.add_log(LogLevel::Info, "demo", "test");
+        let msg = CStr::from_ptr(msg).to_bytes();
+        let msgText = GB18030.decode(msg, DecoderTrap::Ignore).unwrap();
+        cqpapi.send_private_message(qq_number, &format!("收到消息:{}", msgText));
+        //cqpapi.add_log(LogLevel::Info, "demo", "test");
     }
     0
 }
