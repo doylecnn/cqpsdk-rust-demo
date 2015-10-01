@@ -1,0 +1,14 @@
+[package]
+name = "demo"
+version = "0.1.0"
+authors = ["doylecnn"]
+links = "CQP"
+build = "build.rs"
+
+[dependencies.cqpsdk]
+#git = "https://github.com/doylecnn/cqpsdk-rust"
+path = "/cqpsdk-rust"
+
+[lib]
+name = "demo"
+crate-type = [ "dylib" ]
